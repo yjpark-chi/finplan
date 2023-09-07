@@ -72,10 +72,6 @@ def view_tables():
     print("Income\n", rv)
     con.close()
 
-# initialize table if it doesn't exist
-create_table()
-view_tables()
-
 
 # FLASK ENDPOINTS
 
@@ -206,3 +202,6 @@ def income():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # initialize table if it doesn't exist
+    create_table()
+    view_tables()

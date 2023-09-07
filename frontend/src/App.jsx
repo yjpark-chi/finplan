@@ -21,11 +21,11 @@ function App() {
     function showProfile() {
         return (
             <div>
-            <h1>Spending overview</h1>
+            <h1>This month,</h1>
             {profileData &&
                 <div>
-                    <p>Income this month: {profileData.monthly_income}</p>
-                    <p>Spending this month: {profileData.monthly_spend}</p>
+                    <p>You earned: {profileData.monthly_income}</p>
+                    <p>You spent: {profileData.monthly_spend}</p>
                 </div>
             }
             <button onClick={goBack}>Back</button>

@@ -24,15 +24,51 @@ function App() {
             <h1>This month,</h1>
             {profileData &&
                 <div>
-                    <p>You earned: {profileData.monthly_income}</p>
-                    <p>You spent: {profileData.monthly_spend}</p>
+                    You earned: ${profileData.monthly_income}<br/><br/>
+                    You spent:
+                    {
+                        Object.keys(profileData.monthly_spend).map((key, index) => ( 
+                        <p key={index}>{key}: ${profileData.monthly_spend[key]}</p> 
+                        ))
+                    }
+                    {renderSavingsMessage()}<br/><br/>
                 </div>
+
             }
             <button onClick={goBack}>Back</button>
             </div>
         )
     };
 
+    const calculateSavings = () => {
+        if (!profileData) {
+            console.log("Error: could not retrieve profile data.");
+            return null;
+        }
+
+        const savings = profileData.monthly_income - profileData.monthly_spend['Total'];
+        return savings;
+    };
+
+    const renderSavingsMessage = () => {
+        const savings = calculateSavings();
+    
+        if (savings === null) {
+            console.log("Error: could not retrieve profile data.")
+            return null;
+        }
+    
+        const message = savings >= 0 ? 'You saved:' : 'You overspent:';
+        const color = savings >= 0 ? 'green' : 'red';
+        const fontWeight = 'bold';
+    
+        return (
+            <div style={{ color, fontWeight }}>
+              {message} ${savings}
+            </div>
+          );
+        };
+    
 
     function showForm() {
         return (

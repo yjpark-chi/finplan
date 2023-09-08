@@ -84,18 +84,18 @@ def my_profile():
     month = today.strftime("%m")
     Month = today.strftime("%B")
     year = today.strftime("%Y")
-    # categories =["Housing", "Transportation", "Groceries", "Utilities",
-    #             "Medical", "Savings", "Entertainment", "Other"]
+
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
     
-    spend = f"""SELECT SUM(amount)
+    spend = f"""SELECT type, SUM(amount)
             FROM {SPEND_TABLE}
-            WHERE spendDate BETWEEN '{year}-{month}-01' AND '{year}-{month}-31'"""
+            WHERE spendDate BETWEEN '{year}-{month}-01' AND '{year}-{month}-31'
+            GROUP BY type"""
     income = f"""SELECT SUM(income)
             FROM {INCOME_TABLE}
             WHERE month LIKE '%{Month}%' AND year LIKE '%{year}%'"""
-    
+
     spendData = "error"
     incomeData = "error"
     try:
@@ -112,10 +112,12 @@ def my_profile():
         print(e)
         app.logger.error("Could not retrieve income data.")
 
+    spendData = dict(spendData)
+    spendData['Total'] = sum(spendData.values())
     print(spendData, incomeData)
     response = {
         "code": 200,
-        "spend": spendData[0],
+        "spend": spendData,
         "income": incomeData[0]
     }
 

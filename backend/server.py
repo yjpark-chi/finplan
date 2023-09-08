@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from datetime import date
+import datetime
 import sqlite3
 import sys
 
@@ -75,15 +75,17 @@ def view_tables():
 
 # FLASK ENDPOINTS
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET'])
 def my_profile():
     """
     GET request to display basic spend info to the user
     """
-    today = date.today()
-    month = today.strftime("%m")
-    Month = today.strftime("%B")
-    year = today.strftime("%Y")
+
+    Month = request.args['month']
+    year = request.args['year']
+
+    date = datetime.datetime.strptime(f"{Month} {year}", "%B %Y")    
+    month = f"{date.month:02}"
 
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
@@ -121,7 +123,7 @@ def my_profile():
         "income": incomeData[0]
     }
 
-    return jsonify(response)
+    return jsonify(response), 200
 
 
 @app.route('/home')

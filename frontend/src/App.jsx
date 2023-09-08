@@ -3,6 +3,7 @@ import './App.css'
 import axios from "axios";
 import Form from "./components/Form.jsx";
 import Income from "./components/Income.jsx";
+import Profile from "./components/Profile.jsx";
 
 
 
@@ -20,22 +21,23 @@ function App() {
 
     function showProfile() {
         return (
-            <div>
-            <h1>This month,</h1>
-            {profileData &&
                 <div>
-                    You earned: ${profileData.monthly_income}<br/><br/>
-                    You spent:
-                    {
-                        Object.keys(profileData.monthly_spend).map((key, index) => ( 
-                        <p key={index}>{key}: ${profileData.monthly_spend[key]}</p> 
-                        ))
+                    <Profile
+                        getAccountData={getAccountData}/>
+                    <br />
+                    {profileData &&
+                        <div>
+                            You earned: ${profileData.monthly_income}<br/><br/>
+                            You spent:
+                            {
+                                Object.keys(profileData.monthly_spend).map((key, index) => ( 
+                                <p key={index}>{key}: ${profileData.monthly_spend[key]}</p> 
+                                ))
+                            }
+                            {renderSavingsMessage()}<br/><br/>
+                        </div>
                     }
-                    {renderSavingsMessage()}<br/><br/>
-                </div>
-
-            }
-            <button onClick={goBack}>Back</button>
+                <button onClick={goBack}>Back</button>
             </div>
         )
     };
@@ -64,10 +66,10 @@ function App() {
     
         return (
             <div style={{ color, fontWeight }}>
-              {message} ${savings}
+            {message} ${savings}
             </div>
-          );
-        };
+        );
+    };
     
 
     function showForm() {
@@ -94,17 +96,17 @@ function App() {
         )
     };
 
-    function getAccountData() {
+    function getAccountData(data) {
+        const url = `http://localhost:5000/profile?month=${data[0]["month"]}&year=${data[0]["year"]}`;
         axios({
             method: "GET",
-            url:"http://localhost:5000/profile",
+            url: url,
         })
         .then((response) => {
             const res = response.data
             setProfileData(({
                 monthly_spend: res.spend,
                 monthly_income: res.income}))
-            setView("profile")
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response)
@@ -132,7 +134,7 @@ function App() {
             return (
                 <div>
                     <h1>Hello, what would you like to do today?</h1>
-                    <button onClick={getAccountData}>Overview</button><br/><br/>
+                    <button onClick={() => setView("profile")}>Overview</button><br/><br/>
                     <button onClick={() => setView("add")}>Add spending</button><br/><br/>
                     <button onClick={() => setView("income")}>Add income</button>
                 </div>

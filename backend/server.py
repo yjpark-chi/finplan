@@ -114,7 +114,7 @@ def my_profile():
 
     spendData = dict(spendData)
     spendData['Total'] = sum(spendData.values())
-    print(spendData, incomeData)
+
     response = {
         "code": 200,
         "spend": spendData,
